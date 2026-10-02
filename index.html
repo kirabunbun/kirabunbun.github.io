@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#ff9fc4">
+<meta name="description" content="CPU Scheduling Calculator - Works on iPhone, Android, Tablet, Desktop">
+<meta name="keywords" content="CPU scheduling, FCFS, SJF, Round Robin">
+<meta name="author" content="Kira">
+
+<title>CPU Scheduling Calculator</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    background: linear-gradient(135deg, #ffd6e7, #fff5f9);
+    background-attachment: fixed;
+    padding: max(clamp(10px, 3vw, 30px), env(safe-area-inset-top))
+             max(clamp(10px, 3vw, 30px), env(safe-area-inset-right))
+             max(clamp(10px, 3vw, 30px), env(safe-area-inset-bottom))
+             max(clamp(10px, 3vw, 30px), env(safe-area-inset-left));
+    color: #5a4050;
+    overflow-x: hidden;
+    font-size: clamp(14px, 2.5vw, 18px);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+    width: 100%;
+    max-width: 1100px;
+    margin: auto;
+    background: white;
+    border: max(2px, 0.5vw) solid #ff9fc4;
+    border-radius: clamp(18px, 3vw, 30px);
+    padding: clamp(14px, 3vw, 30px);
+    box-shadow: 0 10px 30px #ff69a040;
+}
+
+.header {
+    text-align: center;
+    background: #ffb6d5;
+    border-radius: clamp(16px, 2.5vw, 25px);
+    padding: clamp(14px, 3vw, 25px);
+    margin-bottom: clamp(15px, 2.5vw, 25px);
+    border: max(2px, 0.3vw) solid #ff82b4;
+}
+
+.header h1 {
+    color: white;
+    font-size: clamp(20px, 5vw, 32px);
+    text-shadow: 2px 2px #e875a5;
+    letter-spacing: 0.5px;
+}
+
+.section {
+    background: #fff7fb;
+    border: max(1.5px, 0.3vw) solid #ffb4d2;
+    border-radius: 20px;
+    padding: clamp(12px, 2.5vw, 20px);
+    margin-bottom: clamp(14px, 2vw, 20px);
+}
+
+.section h2 {
+    color: #e85d96;
+    margin-bottom: 15px;
+    font-size: clamp(18px, 3.5vw, 24px);
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #8c5270;
+    font-size: clamp(13px, 2.3vw, 16px);
+}
+
+select,
+input {
+    width: 100%;
+    min-height: 48px;
+    padding: clamp(10px, 2.5vw, 14px);
+    border: 2px solid #ffafd0;
+    border-radius: 12px;
+    outline: none;
+    background: white;
+    color: #5a4050;
+    font-size: 16px;
+    -webkit-appearance: none;
+    appearance: none;
+    -webkit-border-radius: 8px;
+    font-family: inherit;
+}
+
+select:focus,
+input:focus {
+    border-color: #ff5f9e;
+    box-shadow: 0 0 0 3px #ff5f9e33;
+}
+
+input:disabled {
+    background: #f6ecf1;
+    color: #a58a98;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+input::placeholder {
+    color: #c05b86;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.algorithm-box {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: clamp(14px, 3vw, 20px);
+}
+
+.table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    background: white;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+
+table {
+    width: 100%;
+    min-width: 560px;
+    border-collapse: collapse;
+    background: white;
+    table-layout: auto;
+}
+
+.results-table {
+    min-width: 600px;
+}
+
+th {
+    background: #ff8fba;
+    color: white;
+    padding: clamp(10px, 2vw, 12px);
+    font-size: clamp(12px, 2.6vw, 16px);
+    font-weight: 600;
+    text-align: center;
+    border: 1px solid #ff7aaa;
+}
+
+td {
+    padding: clamp(8px, 1.5vw, 10px);
+    text-align: center;
+    border-bottom: 1px solid #ffd4e5;
+    font-size: clamp(12px, 2.2vw, 15px);
+    word-break: break-word;
+}
+
+tr:nth-child(even) {
+    background: #fff0f6;
+}
+
+tr:hover {
+    background: #ffebf2;
+}
+
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: clamp(12px, 3vw, 15px);
+    margin-top: 20px;
+}
+
+button, .reset {
+    border: none;
+    padding: clamp(10px, 2.5vw, 15px) clamp(20px, 5vw, 35px);
+    min-height: 48px;
+    min-width: 48px;
+    border-radius: clamp(15px, 4vw, 25px);
+    font-size: clamp(14px, 2.5vw, 16px);
+    font-weight: 600;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.calculate {
+    background: #ff5f9e;
+    color: white;
+}
+
+.calculate:hover {
+    background: #e94d8d;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 95, 158, 0.3);
+}
+
+.calculate:active {
+    transform: translateY(0);
+}
+
+.reset {
+    background: #ffd1e3;
+    color: #7a4960;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.reset:hover {
+    background: #ffc0d8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 193, 216, 0.3);
+}
+
+.reset:active {
+    transform: translateY(0);
+}
+
+.average-box {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: clamp(14px, 3vw, 20px);
+    margin-top: 20px;
+}
+
+.average {
+    background: #ffdfeb;
+    border: 2px solid #ff9fc4;
+    padding: clamp(12px, 2.5vw, 15px) clamp(20px, 3vw, 30px);
+    border-radius: 18px;
+    text-align: center;
+    min-width: 120px;
+    box-shadow: 0 2px 8px rgba(255, 159, 196, 0.15);
+}
+
+.average strong {
+    display: block;
+    color: #e85d96;
+    margin-bottom: 8px;
+    font-size: clamp(12px, 2vw, 14px);
+}
+
+.average span {
+    font-size: clamp(16px, 3vw, 20px);
+    font-weight: 700;
+    color: #d9497e;
+}
+
+.quantum-status {
+    margin-top: 7px;
+    font-size: clamp(11px, 1.8vw, 13px);
+    color: #c05b86;
+    min-height: 1.2em;
+}
+
+/* Extra small devices (< 360px) */
+@media (max-width: 360px) {
+    .container {
+        border-width: 1px;
+        padding: 8px;
+    }
+    
+    th, td {
+        padding: 6px 4px;
+        font-size: 11px;
+    }
+    
+    input, select {
+        padding: 8px 6px;
+        font-size: 16px;
+    }
+    
+    .algorithm-box {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+}
+
+/* Small phones (360px - 600px) */
+@media (max-width: 600px) {
+    .header h1 {
+        font-size: clamp(18px, 4vw, 24px);
+    }
+    
+    .average-box {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .buttons {
+        flex-direction: column;
+    }
+    
+    .buttons .calculate,
+    .buttons .reset {
+        width: 100%;
+    }
+    
+    .algorithm-box {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+}
+
+/* Tablets (600px - 900px) */
+@media (max-width: 900px) and (min-width: 601px) {
+    .algorithm-box {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Landscape orientation */
+@media (max-height: 500px) and (orientation: landscape) {
+    .container {
+        padding: clamp(8px, 2vw, 15px);
+    }
+    
+    .header {
+        padding: 8px 15px;
+        margin-bottom: 10px;
+    }
+    
+    .section {
+        padding: 10px;
+    }
+}
+
+/* Large DPI displays (retina) */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    body {
+        font-size: clamp(13px, 2vw, 16px);
+    }
+}
+
+/* Print styles */
+@media print {
+    body {
+        background: white;
+        padding: 0;
+    }
+    
+    .buttons,
+    .reset {
+        display: none;
+    }
+    
+    .container {
+        box-shadow: none;
+        border: 1px solid #999;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    body {
+        background: linear-gradient(135deg, #6b3a52, #4a2a3a);
+        color: #e0b0c0;
+    }
+    
+    .container {
+        background: #2a1a2a;
+        border-color: #8b5570;
+    }
+    
+    .section {
+        background: #3a2a3a;
+        border-color: #6b5560;
+    }
+    
+    select, input {
+        background: #2a1a2a;
+        color: #e0b0c0;
+        border-color: #6b5560;
+    }
+    
+    table {
+        background: #2a1a2a;
+        color: #e0b0c0;
+    }
+    
+    tr:nth-child(even) {
+        background: #3a2a3a;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>CPU SCHEDULING CALCULATOR</h1>
+    </div>
+
+    <form id="calculatorForm" novalidate>
+
+        <div class="section">
+            <h2>Scheduling Algorithm</h2>
+
+            <div class="algorithm-box">
+
+                <div>
+                    <label for="algorithm">Choose Algorithm</label>
+
+                    <select name="algorithm" id="algorithm" required>
+                        <option value="FCFS" selected>
+                            First Come First Serve (FCFS)
+                        </option>
+
+                        <option value="SJF">
+                            Shortest Job First (SJF)
+                        </option>
+
+                        <option value="RR">
+                            Round Robin (RR)
+                        </option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="quantum">Time Quantum (RR only)</label>
+
+                    <input
+                        type="number"
+                        name="quantum"
+                        id="quantum"
+                        value="2"
+                        min="1"
+                        max="20"
+                        step="1"
+                        inputmode="numeric"
+                        disabled
+                    >
+
+                    <div class="quantum-status" id="quantumStatus" aria-live="polite" aria-atomic="true">
+                        Time Quantum is only used for Round Robin.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Process Information</h2>
+
+            <div class="table-wrap" role="region" aria-label="Process input table">
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Process ID</th>
+                            <th scope="col">Arrival Time</th>
+                            <th scope="col">Burst Time</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <td scope="row">P1</td>
+                            <td>
+                                <input type="number" class="arrival-time" data-process="1" value="0" min="0" required>
+                            </td>
+                            <td>
+                                <input type="number" class="burst-time" data-process="1" value="5" min="1" required>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td scope="row">P2</td>
+                            <td>
+                                <input type="number" class="arrival-time" data-process="2" value="1" min="0" required>
+                            </td>
+                            <td>
+                                <input type="number" class="burst-time" data-process="2" value="3" min="1" required>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td scope="row">P3</td>
+                            <td>
+                                <input type="number" class="arrival-time" data-process="3" value="2" min="0" required>
+                            </td>
+                            <td>
+                                <input type="number" class="burst-time" data-process="3" value="8" min="1" required>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td scope="row">P4</td>
+                            <td>
+                                <input type="number" class="arrival-time" data-process="4" value="3" min="0" required>
+                            </td>
+                            <td>
+                                <input type="number" class="burst-time" data-process="4" value="6" min="1" required>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td scope="row">P5</td>
+                            <td>
+                                <input type="number" class="arrival-time" data-process="5" value="4" min="0" required>
+                            </td>
+                            <td>
+                                <input type="number" class="burst-time" data-process="5" value="4" min="1" required>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div class="buttons">
+
+                <button
+                    class="calculate"
+                    type="button"
+                    id="calculateBtn"
+                    aria-label="Calculate scheduling results">
+                    CALCULATE
+                </button>
+
+                <button class="reset" type="button" id="resetBtn" aria-label="Reset form to default values">
+                    ♡ RESET
+                </button>
+
+            </div>
+        </div>
+
+    </form>
+
+    <div class="section">
+
+        <h2>Results</h2>
+
+        <div class="table-wrap" role="region" aria-label="Results table">
+
+            <table class="results-table">
+
+                <thead>
+                    <tr>
+                        <th scope="col">Process ID</th>
+                        <th scope="col">Arrival Time</th>
+                        <th scope="col">Burst Time</th>
+                        <th scope="col">Completion Time</th>
+                        <th scope="col">Turnaround Time</th>
+                        <th scope="col">Waiting Time</th>
+                    </tr>
+                </thead>
+
+                <tbody id="resultsBody">
+                    <tr>
+                        <td colspan="6">Results will appear here ♡</td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="average-box" id="averageBox" style="display: none;">
+
+            <div class="average">
+                <strong>Average TAT</strong>
+                <span id="avgTAT">0.00</span>
+            </div>
+
+            <div class="average">
+                <strong>Average WT</strong>
+                <span id="avgWT">0.00</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+(function() {
+    'use strict';
+    
+    const algorithm = document.getElementById("algorithm");
+    const quantum = document.getElementById("quantum");
+    const quantumStatus = document.getElementById("quantumStatus");
+    const calculateBtn = document.getElementById("calculateBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const resultsBody = document.getElementById("resultsBody");
+    const averageBox = document.getElementById("averageBox");
+
+    const defaultValues = {
+        1: { at: 0, bt: 5 },
+        2: { at: 1, bt: 3 },
+        3: { at: 2, bt: 8 },
+        4: { at: 3, bt: 6 },
+        5: { at: 4, bt: 4 }
+    };
+
+    function updateQuantum() {
+        const isRR = algorithm.value === "RR";
+        quantum.disabled = !isRR;
+
+        if (isRR) {
+            quantumStatus.textContent = "Enter a value from 1 to 20.";
+        } else {
+            quantumStatus.textContent = "Time Quantum is only used for Round Robin.";
+        }
+    }
+
+    algorithm.addEventListener("change", function() {
+        updateQuantum();
+
+        if (this.value === "RR") {
+            setTimeout(function() {
+                quantum.focus();
+            }, 100);
+        }
+    });
+
+    quantum.addEventListener("input", function() {
+        let value = parseInt(this.value);
+
+        if (isNaN(value)) {
+            quantumStatus.textContent = "Please enter a Time Quantum.";
+            quantumStatus.style.color = "#d9534f";
+            return;
+        }
+
+        if (value < 1) {
+            this.value = 1;
+            value = 1;
+        }
+
+        if (value > 20) {
+            this.value = 20;
+            value = 20;
+        }
+
+        quantumStatus.textContent = "Time Quantum: " + value;
+        quantumStatus.style.color = "#c05b86";
+    });
+
+    function getProcesses() {
+        const processes = [];
+        for (let i = 1; i <= 5; i++) {
+            const at = parseInt(document.querySelector(`.arrival-time[data-process="${i}"]`).value) || 0;
+            const bt = parseInt(document.querySelector(`.burst-time[data-process="${i}"]`).value) || 1;
+
+            processes.push({
+                id: `P${i}`,
+                at: Math.max(0, at),
+                bt: Math.max(1, bt),
+                remaining: Math.max(1, bt),
+                ct: 0,
+                tat: 0,
+                wt: 0
+            });
+        }
+        return processes;
+    }
+
+    function calculateFCFS(processes) {
+        processes.sort((a, b) => a.at - b.at);
+        let time = 0;
+
+        processes.forEach(p => {
+            time = Math.max(time, p.at);
+            time += p.bt;
+            p.ct = time;
+            p.tat = p.ct - p.at;
+            p.wt = p.tat - p.bt;
+        });
+
+        return processes;
+    }
+
+    function calculateSJF(processes) {
+        let time = 0;
+        let completed = 0;
+        const n = processes.length;
+
+        while (completed < n) {
+            const available = processes.filter(p => p.ct === 0 && p.at <= time);
+
+            if (available.length === 0) {
+                const remaining = processes.filter(p => p.ct === 0);
+                if (remaining.length > 0) {
+                    time = Math.min(...remaining.map(p => p.at));
+                }
+                continue;
+            }
+
+            available.sort((a, b) => a.bt - b.bt);
+            const p = available[0];
+
+            time += p.bt;
+            p.ct = time;
+            p.tat = p.ct - p.at;
+            p.wt = p.tat - p.bt;
+            completed++;
+        }
+
+        return processes;
+    }
+
+    function calculateRR(processes) {
+        const q = Math.max(1, Math.min(20, parseInt(quantum.value) || 2));
+        
+        processes.sort((a, b) => {
+            if (a.at === b.at) return a.id.localeCompare(b.id);
+            return a.at - b.at;
+        });
+
+        let time = 0;
+        let completed = 0;
+        let index = 0;
+        const n = processes.length;
+        const queue = [];
+
+        while (completed < n) {
+            while (index < n && processes[index].at <= time) {
+                queue.push(index);
+                index++;
+            }
+
+            if (queue.length === 0) {
+                if (index < n) {
+                    time = Math.max(time, processes[index].at);
+                    continue;
+                } else {
+                    break;
+                }
+            }
+
+            const i = queue.shift();
+            const execution = Math.min(q, processes[i].remaining);
+
+            time += execution;
+            processes[i].remaining -= execution;
+
+            while (index < n && processes[index].at <= time) {
+                queue.push(index);
+                index++;
+            }
+
+            if (processes[i].remaining > 0) {
+                queue.push(i);
+            } else {
+                processes[i].ct = time;
+                processes[i].tat = processes[i].ct - processes[i].at;
+                processes[i].wt = processes[i].tat - processes[i].bt;
+                completed++;
+            }
+        }
+
+        return processes;
+    }
+
+    function calculate() {
+        const algo = algorithm.value;
+        let processes = getProcesses();
+
+        if (algo === 'FCFS') {
+            processes = calculateFCFS(processes);
+        } else if (algo === 'SJF') {
+            processes = calculateSJF(processes);
+        } else if (algo === 'RR') {
+            processes = calculateRR(processes);
+        }
+
+        processes.sort((a, b) => a.id.localeCompare(b.id));
+        displayResults(processes);
+    }
+
+    function displayResults(processes) {
+        let html = '';
+        let sumTAT = 0;
+        let sumWT = 0;
+
+        processes.forEach(p => {
+            html += `
+                <tr>
+                    <td>${p.id}</td>
+                    <td>${p.at}</td>
+                    <td>${p.bt}</td>
+                    <td>${p.ct}</td>
+                    <td>${p.tat}</td>
+                    <td>${p.wt}</td>
+                </tr>
+            `;
+            sumTAT += p.tat;
+            sumWT += p.wt;
+        });
+
+        resultsBody.innerHTML = html;
+
+        const avgTAT = (sumTAT / processes.length).toFixed(2);
+        const avgWT = (sumWT / processes.length).toFixed(2);
+
+        document.getElementById("avgTAT").textContent = avgTAT;
+        document.getElementById("avgWT").textContent = avgWT;
+
+        averageBox.style.display = 'grid';
+    }
+
+    function resetForm() {
+        for (let i = 1; i <= 5; i++) {
+            document.querySelector(`.arrival-time[data-process="${i}"]`).value = defaultValues[i].at;
+            document.querySelector(`.burst-time[data-process="${i}"]`).value = defaultValues[i].bt;
+        }
+        algorithm.value = "FCFS";
+        quantum.value = 2;
+        updateQuantum();
+        resultsBody.innerHTML = '<tr><td colspan="6">Results will appear here ♡</td></tr>';
+        averageBox.style.display = 'none';
+    }
+
+    calculateBtn.addEventListener("click", function(e) {
+        e.preventDefault();
+        if (algorithm.value === "RR") {
+            const value = parseInt(quantum.value);
+            if (isNaN(value) || value < 1 || value > 20) {
+                quantum.value = 2;
+                quantumStatus.textContent = "Please enter a Time Quantum from 1 to 20.";
+                quantumStatus.style.color = "#d9534f";
+                quantum.focus();
+                return;
+            }
+        }
+        calculate();
+    });
+
+    resetBtn.addEventListener("click", function(e) {
+        e.preventDefault();
+        resetForm();
+    });
+
+    updateQuantum();
+})();
+</script>
+
+<script>
+(function () {
+    'use strict';
+    
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        return;
+    }
+
+    const style = document.createElement("style");
+
+    style.textContent =
+        "#bg3d{position:fixed;top:0;left:0;width:100%;height:100%;" +
+        "z-index:-1;pointer-events:none;display:block}";
+
+    document.head.appendChild(style);
+
+    const c = document.createElement("canvas");
+    c.id = "bg3d";
+    document.body.prepend(c);
+
+    const ctx = c.getContext("2d");
+
+    let W;
+    let H;
+    let dpr;
+
+    function resize() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        W = window.innerWidth;
+        H = window.innerHeight;
+
+        c.width = W * dpr;
+        c.height = H * dpr;
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    resize();
+
+    let resizeTimer;
+
+    function onResize() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(resize, 120);
+    }
+
+    addEventListener("resize", onResize);
+    addEventListener("orientationchange", onResize);
+
+    const colors = [
+        "#ff9fc4",
+        "#ff82b4",
+        "#ffb6d5",
+        "#ff5f9e",
+        "#ffc2dc"
+    ];
+
+    const N = W < 500 ? 22 : W < 900 ? 36 : 60;
+
+    const items = [];
+
+    for (let i = 0; i < N; i++) {
+        items.push({
+            x: Math.random() * W,
+            y: Math.random() * H,
+            z: 0.2 + Math.random() * 0.8,
+            angle: Math.random() * Math.PI * 2,
+            spin: Math.random() * 0.02 + 0.005,
+            phase: Math.random() * 10,
+            color: colors[i % colors.length]
+        });
+    }
+
+    items.sort((a, b) => a.z - b.z);
+
+    let tx = 0;
+    let ty = 0;
+    let cx = 0;
+    let cy = 0;
+
+    const clamp = v => Math.max(-1, Math.min(1, v));
+
+    addEventListener("pointermove", e => {
+        tx = (e.clientX / W - 0.5) * 2;
+        ty = (e.clientY / H - 0.5) * 2;
+    });
+
+    addEventListener("deviceorientation", e => {
+        if (e.gamma != null) {
+            tx = clamp(e.gamma / 30);
+            ty = clamp((e.beta - 45) / 30);
+        }
+    });
+
+    function heart(s) {
+        ctx.beginPath();
+
+        ctx.moveTo(0, s * 0.35);
+
+        ctx.bezierCurveTo(
+            -s,
+            -s * 0.3,
+            -s * 0.5,
+            -s * 0.9,
+            0,
+            -s * 0.4
+        );
+
+        ctx.bezierCurveTo(
+            s * 0.5,
+            -s * 0.9,
+            s,
+            -s * 0.3,
+            0,
+            s * 0.35
+        );
+
+        ctx.fill();
+    }
+
+    const reduce =
+        matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const scaleFor = () =>
+        W < 500 ? 0.7 : W < 900 ? 0.85 : 1;
+
+    let running = true;
+
+    function frame(t) {
+        ctx.clearRect(0, 0, W, H);
+
+        cx += (tx - cx) * 0.06;
+        cy += (ty - cy) * 0.06;
+
+        const k = scaleFor();
+
+        for (const p of items) {
+            if (!reduce) {
+                p.y -= 0.25 + p.z * 0.9;
+                p.angle += p.spin;
+            }
+
+            const size = (8 + p.z * 26) * k;
+
+            if (p.y < -size * 2) {
+                p.y = H + size * 2;
+                p.x = Math.random() * W;
+            }
+
+            const sway =
+                Math.sin(t / 1200 + p.phase) *
+                14 *
+                p.z;
+
+            const px =
+                p.x +
+                sway +
+                cx * p.z * 45;
+
+            const py =
+                p.y +
+                cy * p.z * 45;
+
+            ctx.save();
+
+            ctx.translate(px, py);
+
+            ctx.scale(Math.cos(p.angle), 1);
+
+            ctx.rotate(
+                Math.sin(t / 2000 + p.phase) * 0.3
+            );
+
+            ctx.globalAlpha =
+                0.25 + p.z * 0.45;
+
+            ctx.fillStyle = p.color;
+
+            ctx.shadowColor = p.color;
+
+            ctx.shadowBlur =
+                (1 - p.z) * 12;
+
+            heart(size);
+
+            ctx.restore();
+        }
+
+        if (!reduce && running) {
+            requestAnimationFrame(frame);
+        }
+    }
+
+    requestAnimationFrame(frame);
+
+    document.addEventListener(
+        "visibilitychange",
+        () => {
+            running = !document.hidden;
+
+            if (running && !reduce) {
+                requestAnimationFrame(frame);
+            }
+        }
+    );
+})();
+</script>
+
+</body>
+</html>
